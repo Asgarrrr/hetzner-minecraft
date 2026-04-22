@@ -91,7 +91,7 @@ APP_HOME=/opt/hetzner-minecraft \
 bash provision-ubuntu.sh
 ```
 
-If your CurseForge key starts with `$2a$10$...`, keep the single quotes exactly as shown above.
+If your CurseForge key starts with `$2a$10$...`, keep the single quotes exactly as shown above. On the current version of this repo, that is enough: the key is passed to the container through `env_file`, so you do not need to double the dollar signs in `.env`.
 
 The default `REPO_URL` already points to `https://github.com/Asgarrrr/hetzner-minecraft.git`, so you only need to override it if you fork or rename the repository.
 
