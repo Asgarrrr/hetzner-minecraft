@@ -255,7 +255,7 @@ run_bootstrap() {
   ensure_docker_group_membership
 
   env_script="$(mktemp)"
-  trap 'rm -f "$env_script"' EXIT
+  trap 'rm -f "${env_script:-}"' EXIT
 
   cat > "$env_script" <<EOF
 export CF_API_KEY=$(printf '%q' "${CF_API_KEY:-}")
