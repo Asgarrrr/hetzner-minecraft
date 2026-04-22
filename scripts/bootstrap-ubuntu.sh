@@ -77,7 +77,7 @@ run_sudo() {
 }
 
 docker_compose() {
-  if docker compose version >/dev/null 2>&1; then
+  if docker info >/dev/null 2>&1; then
     (
       cd "$REPO_ROOT"
       docker compose "$@"
