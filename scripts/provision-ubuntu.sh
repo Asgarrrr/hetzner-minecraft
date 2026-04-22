@@ -111,6 +111,16 @@ ensure_group() {
 ensure_user() {
   if id "$APP_USER" >/dev/null 2>&1; then
     log "Using existing user ${APP_USER}."
+    local current_home
+    current_home="$(getent passwd "$APP_USER" | cut -d: -f6)"
+
+    if [[ "$current_home" == "$APP_HOME" && "$APP_USER_HOME" != "$APP_HOME" ]]; then
+      log "Moving ${APP_USER} home from ${APP_HOME} to ${APP_USER_HOME}."
+      run_sudo mkdir -p "$APP_USER_HOME"
+      run_sudo usermod -d "$APP_USER_HOME" "$APP_USER"
+      run_sudo chown "${APP_USER}:${APP_GROUP}" "$APP_USER_HOME"
+    fi
+
     return
   fi
 
@@ -169,14 +179,19 @@ clean_app_dir_skeleton() {
   while IFS= read -r entry; do
     found=1
     case "$entry" in
-      .bash_logout|.bashrc|.profile) ;;
+      .bash_history|.bash_logout|.bashrc|.profile|.sudo_as_admin_successful) ;;
       *) return ;;
     esac
   done < <(find "$APP_HOME" -mindepth 1 -maxdepth 1 -printf '%f\n')
 
   if [[ "$found" == "1" ]]; then
     log "Removing default shell skeleton files from ${APP_HOME} before clone."
-    run_sudo rm -f "${APP_HOME}/.bash_logout" "${APP_HOME}/.bashrc" "${APP_HOME}/.profile"
+    run_sudo rm -f \
+      "${APP_HOME}/.bash_history" \
+      "${APP_HOME}/.bash_logout" \
+      "${APP_HOME}/.bashrc" \
+      "${APP_HOME}/.profile" \
+      "${APP_HOME}/.sudo_as_admin_successful"
   fi
 }
 
