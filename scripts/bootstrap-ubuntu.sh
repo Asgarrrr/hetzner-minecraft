@@ -36,17 +36,34 @@ is_missing_value() {
 
 env_value() {
   local key="$1"
-  awk -F= -v key="$key" '$1 == key { print substr($0, index($0, "=") + 1); exit }' "$ENV_FILE" 2>/dev/null || true
+  local value
+
+  value="$(awk -F= -v key="$key" '$1 == key { print substr($0, index($0, "=") + 1); exit }' "$ENV_FILE" 2>/dev/null || true)"
+
+  if [[ -n "$value" && "${value:0:1}" == "'" && "${value: -1}" == "'" ]]; then
+    value="${value:1:${#value}-2}"
+    value="${value//\\\'/\'}"
+  fi
+
+  printf '%s' "$value"
+}
+
+quote_env_value() {
+  local value="$1"
+  value="${value//\'/\\\'}"
+  printf "'%s'" "$value"
 }
 
 upsert_env() {
   local key="$1"
   local value="$2"
+  local formatted_value
   local tmp_file
 
+  formatted_value="$(quote_env_value "$value")"
   tmp_file="$(mktemp)"
 
-  awk -v key="$key" -v value="$value" '
+  awk -v key="$key" -v value="$formatted_value" '
     BEGIN { updated = 0 }
     $0 ~ ("^" key "=") {
       print key "=" value

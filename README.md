@@ -52,14 +52,14 @@ The script will:
 You can also run it non-interactively:
 
 ```bash
-CF_API_KEY=your_token RCON_PASSWORD=your_password ./scripts/bootstrap-ubuntu.sh
+CF_API_KEY='your_token' RCON_PASSWORD='your_password' ./scripts/bootstrap-ubuntu.sh
 ```
 
 Optional overrides:
 
 ```bash
-CF_API_KEY=your_token \
-RCON_PASSWORD=your_password \
+CF_API_KEY='your_token' \
+RCON_PASSWORD='your_password' \
 MEMORY=20G \
 INIT_MEMORY=4G \
 VIEW_DISTANCE=6 \
@@ -84,12 +84,14 @@ With a public repo, the shortest path on a fresh server is:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Asgarrrr/hetzner-minecraft/main/scripts/provision-ubuntu.sh -o provision-ubuntu.sh
-sudo env CF_API_KEY=your_token \
-RCON_PASSWORD=your_password \
+sudo env CF_API_KEY='your_token' \
+RCON_PASSWORD='your_password' \
 APP_USER=minecraft \
 APP_HOME=/opt/hetzner-minecraft \
 bash provision-ubuntu.sh
 ```
+
+If your CurseForge key starts with `$2a$10$...`, keep the single quotes exactly as shown above.
 
 The default `REPO_URL` already points to `https://github.com/Asgarrrr/hetzner-minecraft.git`, so you only need to override it if you fork or rename the repository.
 
