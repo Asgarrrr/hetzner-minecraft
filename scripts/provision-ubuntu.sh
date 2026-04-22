@@ -32,6 +32,14 @@ run_sudo() {
   fi
 }
 
+move_dir_contents() {
+  local src="$1"
+  local dst="$2"
+
+  run_sudo mkdir -p "$dst"
+  run_sudo bash -lc "shopt -s dotglob nullglob; for path in \"$src\"/*; do mv \"\$path\" \"$dst\"/; done"
+}
+
 ensure_ubuntu() {
   [[ -f /etc/os-release ]] || die "Unsupported system: /etc/os-release not found."
   # shellcheck disable=SC1091
@@ -117,8 +125,9 @@ ensure_user() {
     if [[ "$current_home" == "$APP_HOME" && "$APP_USER_HOME" != "$APP_HOME" ]]; then
       log "Moving ${APP_USER} home from ${APP_HOME} to ${APP_USER_HOME}."
       run_sudo mkdir -p "$APP_USER_HOME"
+      move_dir_contents "$APP_HOME" "$APP_USER_HOME"
       run_sudo usermod -d "$APP_USER_HOME" "$APP_USER"
-      run_sudo chown "${APP_USER}:${APP_GROUP}" "$APP_USER_HOME"
+      run_sudo chown -R "${APP_USER}:${APP_GROUP}" "$APP_USER_HOME"
     fi
 
     return
