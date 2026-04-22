@@ -142,6 +142,7 @@ Main variables in `.env`:
 
 - `CF_API_KEY`: required to download the CurseForge modpack
 - `RCON_PASSWORD`: RCON password
+- `ALLOW_FLIGHT`: set to `true` to avoid kicks when modded flight is detected
 - `MEMORY`: Java max heap, `16G` by default
 - `INIT_MEMORY`: Java initial heap, `4G` by default
 - `CF_FILENAME_MATCHER`: ATM10 version to install, `6.6` by default
