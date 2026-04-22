@@ -1,0 +1,3 @@
+.env
+volumes/minecraft/*
+!volumes/minecraft/.gitkeep
