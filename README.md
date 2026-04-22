@@ -2,7 +2,7 @@
 
 Minimal repo for running **All the Mods 10** on a Hetzner VPS with Docker Compose.
 
-This base currently runs Minecraft only, but the folder structure is already arranged so a future Discord bot can be added without restructuring the repo.
+The repository currently runs Minecraft only, with a reserved `services/discord-bot/` directory for a future bot.
 
 ## Structure
 
@@ -21,13 +21,6 @@ This base currently runs Minecraft only, but the folder structure is already arr
 - `services/minecraft/`: docs and files related to the Minecraft server
 - `services/discord-bot/`: reserved location for the future bot
 - `volumes/minecraft/`: persistent server data
-
-## Why This Structure
-
-- the repo root stays small and readable
-- runtime data does not pollute code directories
-- the bot will have a clear home under `services/discord-bot/` without mixing its code with Minecraft
-- we can later add a `compose.bot.yml` or a second service in `compose.yml` without moving existing data
 
 ## Prerequisites
 
@@ -53,32 +46,6 @@ docker compose logs -f minecraft
 ```
 
 The first boot can take a while: the container downloads the image, then the ATM10 modpack.
-
-## Useful Commands
-
-Start:
-
-```bash
-docker compose up -d
-```
-
-Stop:
-
-```bash
-docker compose stop
-```
-
-Restart:
-
-```bash
-docker compose restart
-```
-
-View logs:
-
-```bash
-docker compose logs -f minecraft
-```
 
 ## Configuration
 
