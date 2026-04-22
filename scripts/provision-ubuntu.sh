@@ -4,6 +4,7 @@ set -Eeuo pipefail
 APP_USER="${APP_USER:-minecraft}"
 APP_GROUP="${APP_GROUP:-$APP_USER}"
 APP_HOME="${APP_HOME:-/opt/hetzner-minecraft}"
+APP_USER_HOME="${APP_USER_HOME:-/home/$APP_USER}"
 REPO_URL="${REPO_URL:-https://github.com/Asgarrrr/hetzner-minecraft.git}"
 REPO_REF="${REPO_REF:-main}"
 UPDATE_REPO="${UPDATE_REPO:-0}"
@@ -113,11 +114,11 @@ ensure_user() {
     return
   fi
 
-  log "Creating system user ${APP_USER} with home ${APP_HOME}."
+  log "Creating system user ${APP_USER} with home ${APP_USER_HOME}."
   run_sudo useradd \
     --system \
     --gid "$APP_GROUP" \
-    --home-dir "$APP_HOME" \
+    --home-dir "$APP_USER_HOME" \
     --create-home \
     --shell /bin/bash \
     "$APP_USER"
@@ -158,8 +159,30 @@ run_as_app() {
   run_sudo runuser -u "$APP_USER" -- "$@"
 }
 
+clean_app_dir_skeleton() {
+  [[ -d "$APP_HOME" ]] || return
+  [[ -d "${APP_HOME}/.git" ]] && return
+
+  local entry
+  local found=0
+
+  while IFS= read -r entry; do
+    found=1
+    case "$entry" in
+      .bash_logout|.bashrc|.profile) ;;
+      *) return ;;
+    esac
+  done < <(find "$APP_HOME" -mindepth 1 -maxdepth 1 -printf '%f\n')
+
+  if [[ "$found" == "1" ]]; then
+    log "Removing default shell skeleton files from ${APP_HOME} before clone."
+    run_sudo rm -f "${APP_HOME}/.bash_logout" "${APP_HOME}/.bashrc" "${APP_HOME}/.profile"
+  fi
+}
+
 clone_repo() {
   prepare_git_auth
+  clean_app_dir_skeleton
 
   if [[ -d "${APP_HOME}/.git" ]]; then
     log "Repository already exists in ${APP_HOME}."

@@ -108,6 +108,7 @@ sudo GITHUB_TOKEN=your_token bash provision-ubuntu.sh
 Useful options:
 
 - `APP_USER`: dedicated Linux user, default `minecraft`
+- `APP_USER_HOME`: Linux home directory for that user, default `/home/minecraft`
 - `APP_HOME`: target directory, default `/opt/hetzner-minecraft`
 - `REPO_REF`: git branch/tag, default `main`
 - `UPDATE_REPO=1`: fetch and fast-forward an existing checkout
